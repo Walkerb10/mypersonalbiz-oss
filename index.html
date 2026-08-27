@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MyPersonalBiz — open source starter</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --card: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.1);
+    --text: #ffffff;
+    --muted: rgba(255,255,255,0.5);
+    --accent: #3b82f6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4rem 1.5rem;
+  }
+  h1 { font-size: 2rem; font-weight: 700; margin: 0 0 0.5rem; }
+  p.lede { color: var(--muted); max-width: 32rem; text-align: center; margin: 0 0 2.5rem; line-height: 1.5; }
+  .card {
+    width: 100%;
+    max-width: 30rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 1.5rem;
+  }
+  label { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.5rem; }
+  input[type="text"] {
+    width: 100%;
+    height: 2.75rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,0.2);
+    color: var(--text);
+    padding: 0 1rem;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  input[type="text"]:focus { outline: none; border-color: var(--accent); }
+  .swatches { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; }
+  .swatch {
+    width: 1.75rem; height: 1.75rem; border-radius: 999px; cursor: pointer;
+    border: 2px solid transparent;
+  }
+  .swatch.active { border-color: #fff; transform: scale(1.1); }
+  button {
+    width: 100%;
+    height: 2.75rem;
+    border-radius: 0.75rem;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  button:hover { filter: brightness(1.1); }
+
+  #preview { display: none; width: 100%; max-width: 40rem; margin-top: 2.5rem; }
+  #preview.visible { display: block; }
+  .preview-shell {
+    border-radius: 1rem;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .preview-topbar {
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 0.75rem;
+    background: rgba(0,0,0,0.3);
+  }
+  .preview-mark {
+    width: 1.5rem; height: 1.5rem; border-radius: 0.4rem;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem; font-weight: 700; color: #fff;
+  }
+  .preview-body { padding: 2.5rem 2rem; text-align: center; }
+  .preview-body h2 { margin: 0 0 0.5rem; font-size: 1.5rem; }
+  .preview-body p { color: var(--muted); margin: 0 0 1.5rem; }
+  .preview-cta {
+    display: inline-block;
+    padding: 0.6rem 1.5rem;
+    border-radius: 999px;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  footer { margin-top: 3rem; color: var(--muted); font-size: 0.8rem; text-align: center; }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+  <h1>Build your own business.</h1>
+  <p class="lede">
+    Name it, pick a color, see it live. This is the open-source core loop behind
+    MyPersonalBiz — no account, no backend, everything happens in your browser.
+  </p>
+
+  <div class="card">
+    <label for="name">Business name</label>
+    <input id="name" type="text" placeholder="Bell and Associates" />
+
+    <label>Accent color</label>
+    <div class="swatches" id="swatches"></div>
+
+    <button id="build">Build it now</button>
+  </div>
+
+  <div id="preview">
+    <div class="preview-shell">
+      <div class="preview-topbar">
+        <div class="preview-mark" id="mark">?</div>
+      </div>
+      <div class="preview-body">
+        <h2 id="pv-name">Your Business</h2>
+        <p>Your own site, your own name, live in your browser right now.</p>
+        <span class="preview-cta" id="pv-cta">Get started</span>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    MIT licensed &middot; <a href="https://github.com/Walkerb10/mypersonalbiz-oss">source</a> &middot;
+    the full hosted platform (real accounts, real payments, a done-for-you tier) lives at
+    <a href="https://mypersonalbiz.com">mypersonalbiz.com</a>
+  </footer>
+
+  <script>
+    var COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#7e8a97"];
+    var chosen = COLORS[0];
+
+    var swatchesEl = document.getElementById("swatches");
+    COLORS.forEach(function (hex, i) {
+      var el = document.createElement("div");
+      el.className = "swatch" + (i === 0 ? " active" : "");
+      el.style.background = hex;
+      el.addEventListener("click", function () {
+        chosen = hex;
+        Array.prototype.forEach.call(swatchesEl.children, function (c) { c.classList.remove("active"); });
+        el.classList.add("active");
+      });
+      swatchesEl.appendChild(el);
+    });
+
+    function initials(name) {
+      var words = name.trim().split(/\s+/).filter(Boolean);
+      if (words.length === 0) return "?";
+      if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
+
+    document.getElementById("build").addEventListener("click", function () {
+      var name = document.getElementById("name").value.trim() || "Your Business";
+      document.getElementById("pv-name").textContent = name;
+      document.getElementById("mark").textContent = initials(name);
+      document.getElementById("mark").style.background = chosen;
+      document.getElementById("pv-cta").style.background = chosen;
+      document.getElementById("preview").classList.add("visible");
+      try {
+        localStorage.setItem("mpb-oss-demo", JSON.stringify({ name: name, color: chosen }));
+      } catch (e) { /* private browsing can refuse storage, fine to skip */ }
+    });
+
+    // Restore last build on reload, since this is the one thing worth
+    // remembering per-browser for a demo with no backend at all.
+    try {
+      var saved = JSON.parse(localStorage.getItem("mpb-oss-demo") || "null");
+      if (saved) {
+        document.getElementById("name").value = saved.name;
+        chosen = saved.color;
+        document.getElementById("build").click();
+      }
+    } catch (e) { /* ignore */ }
+  </script>
+</body>
+</html>
