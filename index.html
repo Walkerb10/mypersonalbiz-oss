@@ -183,6 +183,9 @@
       if (saved) {
         document.getElementById("name").value = saved.name;
         chosen = saved.color;
+        Array.prototype.forEach.call(swatchesEl.children, function (c, i) {
+          c.classList.toggle("active", COLORS[i] === saved.color);
+        });
         document.getElementById("build").click();
       }
     } catch (e) { /* ignore */ }
